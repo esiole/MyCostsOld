@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Главная";
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="text-center">
+        <p>Главная страница</p>
+        <p>Расходы за сегодня</p>
+        <p>Расходы за месяц</p>
+    </div>
+}
+else
+{
+    <p>Пользователь не авторизован</p>
+}

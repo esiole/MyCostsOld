@@ -1,0 +1,7 @@
+﻿@model IEnumerable<Product>
+<select class="form-control" id="products" name="Cost.ProductId">
+    @foreach (var item in Model)
+    {
+        <option value="@item.Id">@item.Name</option>
+    }
+</select>

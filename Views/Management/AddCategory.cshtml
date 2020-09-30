@@ -1,0 +1,13 @@
+﻿@model ProductCategory
+@{
+    ViewBag.Title = "Добавление категории";
+}
+<form asp-action="AddCategory" asp-controller="management">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Название категории</label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Добавить" class="btn btn-default" />
+    </div>
+</form>
