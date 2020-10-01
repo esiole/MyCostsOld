@@ -24,7 +24,7 @@ namespace MyCosts.Controllers.Managment
         {
             await db.Products.LoadAsync();
             await db.Users.LoadAsync();
-            return View(await db.Costs.ToListAsync());
+            return View(await db.Costs.OrderBy(c => c.Date).ToListAsync());
         }
 
         [HttpGet]
