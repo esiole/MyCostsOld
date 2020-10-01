@@ -3,7 +3,7 @@
     ViewBag.Title = "Добавление продукта";
 }
 
-<form asp-action="AddProduct" asp-controller="management">
+<form asp-action="Add">
     <div class="form-group">
         <label asp-for="Product.CategoryId" class="control-label">Название категории</label>
         <select asp-for="Product.CategoryId" asp-items="Model.Categories" class="form-control"></select>

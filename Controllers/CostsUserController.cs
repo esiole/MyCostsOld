@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MyCosts.Controllers
 {
     [Authorize]
-    public class CostsController : Controller
+    public class CostsUserController : Controller
     {
         [HttpGet]
         public IActionResult Index()
