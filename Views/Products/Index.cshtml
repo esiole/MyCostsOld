@@ -13,11 +13,25 @@
             <td>@item.Name</td>
             <td>@item.Category?.Name</td>
             <td>
-                <form asp-action="Delete" asp-route-id="@item.Id">
+                <form asp-action="Delete" asp-route-id="@item.Id" class="deleteForm">
                     <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@item.Id" asp-route-category="@item.CategoryId">Изменить</a>
-                    <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                    <button type="button" class="btn btn-sm btn-danger deleteButton" data-toggle="modal" data-target="#modalWindow">Удалить</button>
                 </form>
             </td>
         </tr>
     }
 </table>
+@await Html.PartialAsync("_ModalWindow", new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить этот продукт?"})
+
+@section scripts{
+    <script type="text/javascript">
+        let triggeredForm;
+        $('.deleteButton').click(function () {
+            triggeredForm = $(event.target).parent();
+        });
+        $('#modalOk').click(function () {
+            triggeredForm.submit();
+            triggeredForm = undefined;
+        });
+    </script>
+}
