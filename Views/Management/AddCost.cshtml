@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Добавление расходов";
 }
+
 <form asp-action="AddCost" asp-controller="management">
     <div class="form-group" hidden>
         <input type="text" name="userName" value="@User.Identity.Name" class="form-control" />

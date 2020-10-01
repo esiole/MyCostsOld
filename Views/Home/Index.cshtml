@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Главная";
 }
+
 @if (User.Identity.IsAuthenticated)
 {
     <div class="text-center">
@@ -11,5 +12,5 @@
 }
 else
 {
-    <p>Пользователь не авторизован</p>
+    @await Component.InvokeAsync("NonAuthorized")
 }
