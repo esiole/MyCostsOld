@@ -20,6 +20,7 @@ namespace MyCosts.Controllers
             db = context;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();

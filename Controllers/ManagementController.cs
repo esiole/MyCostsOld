@@ -18,16 +18,19 @@ namespace MyCosts
             db = context;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
         public async Task<IActionResult> Categories()
         {
             return View(await db.ProductCategories.ToListAsync());
         }
 
+        [HttpGet]
         public IActionResult AddCategory()
         {
             return View();
@@ -72,12 +75,14 @@ namespace MyCosts
             return RedirectToAction("Categories");
         }
 
+        [HttpGet]
         public async Task<IActionResult> Products()
         {
             await db.ProductCategories.LoadAsync();
             return View(await db.Products.ToListAsync());
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddProduct()
         {
             var addProduct = new AddProduct
@@ -107,6 +112,7 @@ namespace MyCosts
             return RedirectToAction("Products");
         }
 
+        [HttpGet]
         public async Task<IActionResult> Costs()
         {
             await db.Products.LoadAsync();
@@ -114,6 +120,7 @@ namespace MyCosts
             return View(await db.Costs.ToListAsync());
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddCost()
         {
             int selectedIndex = 1;
@@ -127,6 +134,7 @@ namespace MyCosts
             return View(addCost);
         }
 
+        [HttpGet] // доступно по обращении через путь url
         public async Task<IActionResult> GetProductsOfACategory(int id)
         {
             var products = await db.Products.Where(p => p.CategoryId == id).OrderBy(p => p.Name).ToListAsync();

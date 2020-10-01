@@ -8,6 +8,7 @@ namespace MyCosts.Controllers
 {
     public class CostsController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
