@@ -13,8 +13,8 @@
             <td>@item.Name</td>
             <td>@item.Category?.Name</td>
             <td>
-                <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                    <!--<a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@item.Id">Изменить</a>-->
+                <form asp-action="Delete" asp-route-id="@item.Id">
+                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@item.Id" asp-route-category="@item.CategoryId">Изменить</a>
                     <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
                 </form>
             </td>

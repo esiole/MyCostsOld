@@ -42,6 +42,33 @@ namespace MyCosts.Controllers.Managment
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id != null)
+            {
+                var product = await db.Products.FirstOrDefaultAsync(p => p.Id == id);
+                if (product != null)
+                {
+                    var editProduct = new AddProduct
+                    {
+                        Product = product,
+                        Categories = new SelectList(await db.ProductCategories.OrderBy(c => c.Name).ToListAsync(), "Id", "Name")
+                    };
+                    return View(editProduct);
+                }
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Product product)
+        {
+            db.Products.Update(product);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
         [HttpPost]
         public async Task<ActionResult> Delete(int id)
         {
