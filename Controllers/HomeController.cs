@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyCosts.Models;
 
@@ -24,8 +25,10 @@ namespace MyCosts.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var gg = DateTime.Now.AddDays(-15);
+            var test = await db.Costs.Where(c => c.Date >= gg).OrderBy(c => c.Date).ToListAsync();
             return View();
         }
 
