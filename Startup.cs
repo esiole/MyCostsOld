@@ -1,15 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyCosts.Data;
+using MyCosts.Models;
+using MyCosts.Models.Interfaces;
+using MyCosts.Models.Repositories;
 
 namespace MyCosts
 {
@@ -25,8 +24,13 @@ namespace MyCosts
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<MyCostsContext>(options => options.UseSqlServer(connection));
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MyCostsContext>();
+            services.AddDbContext<MyCostsDbContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connection));
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MyCostsDbContext>();
+
+            services.AddTransient<ICostsRepository, CostsDbRepository>();
+            services.AddTransient<ICategoriesRepository, CategoriesDbRepository>();
+            services.AddTransient<IProductsRepository, ProductsDbRepository>();
+
             services.AddControllersWithViews();
         }
 

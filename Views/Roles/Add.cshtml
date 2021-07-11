@@ -1,14 +1,24 @@
 ﻿@model string
 @{
-    ViewBag.Title = "Добавление роли";
+    String title = "Новая роль";
+    ViewBag.Title = title;
 }
 
-<div asp-validation-summary="All" class="text-danger"></div>
-
-<form asp-action="Add">
-    <div class="form-group">
-        <label for="name">Новая роль</label>
-        <input name="name" class="form-control" />
+<div class="body-form-add">
+    <div class="form-add">
+        <form asp-action="Add">
+            <div class="mb-4">
+                <h2>@title</h2>
+                <hr class="my-2" />
+            </div>
+            <div class="mb-4">
+                <label for="name" class="form-label">Название</label>
+                <input name="name" class="form-control form-control-lg border-dark" />
+            </div>
+            <hr class="my-4" />
+            <button type="submit" class="btn btn-lg btn-success float-end btn-submit">Добавить</button>
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary">Добавить</button>
-</form>
+</div>
+
+<div asp-validation-summary="All" class="text-danger"></div>

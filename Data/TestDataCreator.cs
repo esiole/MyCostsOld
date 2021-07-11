@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyCosts.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ namespace MyCosts
 {
     public static class TestDataCreator
     {
-        public static void Initialize(MyCostsContext context)
+        public static void Initialize(MyCostsDbContext context)
         {
             //var food = new ProductCategory() { Name = "Еда" };
             //var clothes = new ProductCategory() { Name = "Одежда, обувь и аксессуары" };

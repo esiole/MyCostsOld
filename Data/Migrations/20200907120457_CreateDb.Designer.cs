@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyCosts;
+using MyCosts.Data;
 
 namespace MyCosts.Migrations
 {
-    [DbContext(typeof(MyCostsContext))]
+    [DbContext(typeof(MyCostsDbContext))]
     [Migration("20200907120457_CreateDb")]
     partial class CreateDb
     {

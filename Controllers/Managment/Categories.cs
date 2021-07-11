@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
+using MyCosts.Models;
+using MyCosts.Models.Interfaces;
 using System.Threading.Tasks;
 
 namespace MyCosts.Controllers.Managment
@@ -9,17 +9,17 @@ namespace MyCosts.Controllers.Managment
     [Authorize]
     public class Categories : Controller
     {
-        private MyCostsContext db;
+        private readonly ICategoriesRepository categoriesRepository;
 
-        public Categories(MyCostsContext context)
+        public Categories(ICategoriesRepository categoriesRepository)
         {
-            db = context;
+            this.categoriesRepository = categoriesRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await db.ProductCategories.ToListAsync());
+            return View(await categoriesRepository.GetCategoriesAsync());
         }
 
         [HttpGet]
@@ -31,17 +31,16 @@ namespace MyCosts.Controllers.Managment
         [HttpPost]
         public async Task<IActionResult> Add(ProductCategory category)
         {
-            db.ProductCategories.Add(category);
-            await db.SaveChangesAsync();
+            await categoriesRepository.AddAsync(category);
             return RedirectToAction("Index");
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id != null)
+            if (id.HasValue)
             {
-                var category = await db.ProductCategories.FirstOrDefaultAsync(с => с.Id == id);
+                var category = await categoriesRepository.GetCategoryAsync(id.Value);
                 if (category != null)
                     return View(category);
             }
@@ -51,20 +50,14 @@ namespace MyCosts.Controllers.Managment
         [HttpPost]
         public async Task<IActionResult> Edit(ProductCategory category)
         {
-            db.ProductCategories.Update(category);
-            await db.SaveChangesAsync();
+            await categoriesRepository.UpdateAsync(category);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<ActionResult> Delete(int id)
         {
-            var category = await db.ProductCategories.FirstOrDefaultAsync(p => p.Id == id);
-            if (category != null)
-            {
-                db.ProductCategories.Remove(category);
-                await db.SaveChangesAsync();
-            }
+            await categoriesRepository.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }

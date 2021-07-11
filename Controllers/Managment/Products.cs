@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using MyCosts.Models;
+using MyCosts.Models.Interfaces;
 using System.Threading.Tasks;
 
 namespace MyCosts.Controllers.Managment
@@ -10,18 +10,19 @@ namespace MyCosts.Controllers.Managment
     [Authorize]
     public class Products : Controller
     {
-        private MyCostsContext db;
+        private readonly IProductsRepository productsRepository;
+        private readonly ICategoriesRepository categoriesRepository;
 
-        public Products(MyCostsContext context)
+        public Products(IProductsRepository productsRepository, ICategoriesRepository categoriesRepository)
         {
-            db = context;
+            this.productsRepository = productsRepository;
+            this.categoriesRepository = categoriesRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            await db.ProductCategories.LoadAsync();
-            return View(await db.Products.ToListAsync());
+            return View(await productsRepository.GetProductsAsync());
         }
 
         [HttpGet]
@@ -29,7 +30,7 @@ namespace MyCosts.Controllers.Managment
         {
             var addProduct = new AddProduct
             {
-                Categories = new SelectList(await db.ProductCategories.OrderBy(c => c.Name).ToListAsync(), "Id", "Name"),
+                Categories = new SelectList(await categoriesRepository.GetCategoriesAsync(), "Id", "Name"),
             };
             return View(addProduct);
         }
@@ -37,23 +38,22 @@ namespace MyCosts.Controllers.Managment
         [HttpPost]
         public async Task<IActionResult> Add(Product product)
         {
-            db.Products.Add(product);
-            await db.SaveChangesAsync();
+            await productsRepository.AddAsync(product);
             return RedirectToAction("Index");
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id != null)
+            if (id.HasValue)
             {
-                var product = await db.Products.FirstOrDefaultAsync(p => p.Id == id);
+                var product = await productsRepository.GetProductAsync(id.Value);
                 if (product != null)
                 {
                     var editProduct = new AddProduct
                     {
                         Product = product,
-                        Categories = new SelectList(await db.ProductCategories.OrderBy(c => c.Name).ToListAsync(), "Id", "Name")
+                        Categories = new SelectList(await categoriesRepository.GetCategoriesAsync(), "Id", "Name")
                     };
                     return View(editProduct);
                 }
@@ -64,20 +64,14 @@ namespace MyCosts.Controllers.Managment
         [HttpPost]
         public async Task<IActionResult> Edit(Product product)
         {
-            db.Products.Update(product);
-            await db.SaveChangesAsync();
+            await productsRepository.UpdateAsync(product);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<ActionResult> Delete(int id)
         {
-            var product = await db.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (product != null)
-            {
-                db.Products.Remove(product);
-                await db.SaveChangesAsync();
-            }
+            await productsRepository.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }

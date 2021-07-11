@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Cost>
+@{
+    String title = "Все расходы";
+    ViewBag.Title = title;
+    ViewBag.IsAllUsers = true;
+}
+
+<div class="mt-3">
+    <h2>@title</h2>
+</div>
+<partial name="_CostsTable" model="Model" />
+
+<partial name="_ModalWindow" model='new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эти расходы?"}' />

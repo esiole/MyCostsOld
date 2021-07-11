@@ -1,18 +1,17 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+using MyCosts.Models;
 
-namespace MyCosts
+namespace MyCosts.Data
 {
     //public class MyCostsContext : DbContext
-    public class MyCostsContext : IdentityDbContext<User>
+    public class MyCostsDbContext : IdentityDbContext<User>
     {
-        public MyCostsContext()
+        public MyCostsDbContext()
         {
         }
 
-        public MyCostsContext(DbContextOptions<MyCostsContext> options)
+        public MyCostsDbContext(DbContextOptions<MyCostsDbContext> options)
             : base(options)
         {
             //Database.EnsureCreated();

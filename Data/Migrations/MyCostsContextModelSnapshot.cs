@@ -5,10 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyCosts;
+using MyCosts.Data;
 
 namespace MyCosts.Migrations
 {
-    [DbContext(typeof(MyCostsContext))]
+    [DbContext(typeof(MyCostsDbContext))]
     partial class MyCostsContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyCosts.Controllers.Managment
 {
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public class Roles : Controller
     {
         private RoleManager<IdentityRole> roleManager;
@@ -21,7 +20,7 @@ namespace MyCosts.Controllers.Managment
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await roleManager.Roles.ToListAsync());
+            return View(await roleManager.Roles.OrderBy(r => r.Name).ToListAsync());
         }
 
         [HttpGet]

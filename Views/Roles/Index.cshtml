@@ -1,39 +1,39 @@
-﻿@using Microsoft.AspNetCore.Identity
-
-@model IEnumerable<IdentityRole>
+﻿@model IEnumerable<IdentityRole>
 @{
-    ViewBag.Title = "Роли";
+    String title = "Роли";
+    ViewBag.Title = title;
 }
 
-<a asp-action="Add">Добавить роль</a>
-<a asp-controller="Users">Список пользователей</a>
-
-<table class="table">
-    <tr><td>Id</td><td>Название роли</td><td>Действия</td></tr>
-    @foreach (var item in Model)
-    {
+<div class="d-flex flex-row justify-content-between align-items-center mt-3">
+    <div>
+        <h2>@title</h2>
+    </div>
+    <div>
+        <partial name="_AddButton" />
+    </div>
+</div>
+<table class="table table-hover table-bordered">
+    <thead class="table-dark">
         <tr>
-            <td>@item.Id</td>
-            <td>@item.Name</td>
-            <td>
-                <form asp-action="Delete" asp-route-id="@item.Id" class="deleteForm">
-                    <button type="button" class="btn btn-sm btn-danger deleteButton" data-toggle="modal" data-target="#modalWindow">Удалить</button>
-                </form>
-            </td>
+            <td>Id</td>
+            <td>Название роли</td>
+            <td>Действия</td>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@item.Id" class="deleteForm">
+                        <partial name="_TableDelButton" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
-@await Html.PartialAsync("_ModalWindow", new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эту роль?" })
 
-@section scripts{
-    <script type="text/javascript">
-        let triggeredForm;
-        $('.deleteButton').click(function () {
-            triggeredForm = $(event.target).parent();
-        });
-        $('#modalOk').click(function () {
-            triggeredForm.submit();
-            triggeredForm = undefined;
-        });
-    </script>
-}
+<partial name="_ModalWindow" model='new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эту роль?" }' />

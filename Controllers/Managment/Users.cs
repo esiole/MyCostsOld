@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using MyCosts.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyCosts.Controllers.Managment
 {
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public class Users : Controller
     {
         private UserManager<User> userManager;
@@ -24,7 +24,7 @@ namespace MyCosts.Controllers.Managment
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await userManager.Users.ToListAsync());
+            return View(await userManager.Users.OrderBy(u => u.Email).ToListAsync());
         }
 
         [HttpPost]

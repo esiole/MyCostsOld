@@ -1,22 +1,23 @@
-﻿<ul class="navbar-nav">
-    @if (User.Identity.IsAuthenticated)
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark">Привет, @User.Identity.Name!</a>
-        </li>
+﻿@if (User.Identity.IsAuthenticated)
+{
+    <span class="navbar-text text-white">@User.Identity.Name</span>
+    <ul class="navbar-nav ms-4">
         <li class="nav-item">
             <form class="form-inline" method="post" asp-controller="Account" asp-action="Logout">
-                <button type="submit" class="nav-link btn btn-link text-dark">Выйти</button>
+                <button type="submit" class="btn btn-outline-light">Выйти</button>
             </form>
         </li>
-    }
-    else
-    {
+    </ul>
+}
+else
+{
+    <ul class="navbar-nav flex-grow-1"></ul>
+    <ul class="navbar-nav flex-">
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Регистрация</a>
+            <a class="nav-link" asp-controller="Account" asp-action="Register">Регистрация</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Войти</a>
+            <a class="nav-link" asp-controller="Account" asp-action="Login">Войти</a>
         </li>
-    }
-</ul>
+    </ul>
+}

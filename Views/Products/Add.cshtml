@@ -1,18 +1,26 @@
 ﻿@model AddProduct
 @{
-    ViewBag.Title = "Добавление продукта";
+    String title = "Новый продукт";
+    ViewBag.Title = title;
 }
 
-<form asp-action="Add">
-    <div class="form-group">
-        <label asp-for="Product.CategoryId" class="control-label">Название категории</label>
-        <select asp-for="Product.CategoryId" asp-items="Model.Categories" class="form-control"></select>
+<div class="body-form-add">
+    <div class="form-add">
+        <form asp-action="Add">
+            <div class="mb-4">
+                <h2>@title</h2>
+                <hr class="my-2" />
+            </div>
+            <div class="mb-4">
+                <label asp-for="Product.CategoryId" class="form-label"></label>
+                <select asp-for="Product.CategoryId" asp-items="Model.Categories" class="form-select form-select-lg border-dark"></select>
+            </div>
+            <div class="mb-4">
+                <label asp-for="Product.Name" class="form-label"></label>
+                <input asp-for="Product.Name" class="form-control form-control-lg border-dark" />
+            </div>
+            <hr class="my-4" />
+            <input type="submit" class="btn btn-lg btn-success float-end btn-submit" value="Добавить" />
+        </form>
     </div>
-    <div class="form-group">
-        <label asp-for="Product.Name" class="control-label">Название продукта</label>
-        <input type="text" asp-for="Product.Name" class="form-control" />
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Добавить" class="btn btn-default" />
-    </div>
-</form>
+</div>

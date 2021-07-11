@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MyCosts.Data;
 
 namespace MyCosts
 {
@@ -21,7 +18,7 @@ namespace MyCosts
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<MyCostsContext>();
+                    var context = services.GetRequiredService<MyCostsDbContext>();
                     TestDataCreator.Initialize(context);
                 }
                 catch (Exception ex)
