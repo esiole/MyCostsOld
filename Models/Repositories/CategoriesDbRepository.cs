@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyCosts.Data;
 using MyCosts.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +25,15 @@ namespace MyCosts.Models.Repositories
 
         public async Task<int> CountAsync() => await db.ProductCategories.CountAsync();
 
+        public async Task<int> CountAsync(string search)
+        {
+            if (String.IsNullOrEmpty(search))
+            {
+                return await CountAsync();
+            }
+            return await db.ProductCategories.Where(c => c.Name.Contains(search)).CountAsync();
+        }
+
         public async Task DeleteAsync(ProductCategory category)
         {
             if (category != null)
@@ -43,6 +53,16 @@ namespace MyCosts.Models.Repositories
         public async Task<IEnumerable<ProductCategory>> GetCategoriesAsync(int skip, int take)
         {
             var query = db.ProductCategories.OrderBy(c => c.Name);
+            return await query.Skip(skip).Take(take).ToListAsync();
+        }
+
+        public async Task<IEnumerable<ProductCategory>> GetCategoriesAsync(int skip, int take, string search)
+        {
+            if (String.IsNullOrEmpty(search))
+            {
+                return await GetCategoriesAsync(skip, take);
+            }
+            var query = db.ProductCategories.Where(c => c.Name.Contains(search));
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 

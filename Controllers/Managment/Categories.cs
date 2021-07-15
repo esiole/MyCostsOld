@@ -19,17 +19,18 @@ namespace MyCosts.Controllers.Managment
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string search = null)
         {
             var skip = (page - 1) * SizePage;
-            var categories = await categoriesRepository.GetCategoriesAsync(skip, SizePage);
-            var totalCount = await categoriesRepository.CountAsync();
+            var categories = await categoriesRepository.GetCategoriesAsync(skip, SizePage, search);
+            var totalCount = await categoriesRepository.CountAsync(search);
             return View(new Pagination<ProductCategory>
             {
                 Records = categories,
                 Page = page,
                 PerPage = SizePage,
-                CountRecords = totalCount
+                CountRecords = totalCount,
+                Search = search
             });
         }
 
