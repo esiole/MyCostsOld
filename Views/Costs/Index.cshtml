@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Cost>
+﻿@model Pagination<Cost>
 @{
     String title = "Расходы";
     ViewBag.Title = title;
@@ -13,6 +13,7 @@
         <partial name="_AddButton" />
     </div>
 </div>
-<partial name="_CostsTable" model="Model" />
+<partial name="_CostsTable" model="Model.Records" />
+<pagination page="@Model.Page" per-page="@Model.PerPage" count-records="@Model.CountRecords"></pagination>
 
 <partial name="_ModalWindow" model='new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эти расходы?"}' />

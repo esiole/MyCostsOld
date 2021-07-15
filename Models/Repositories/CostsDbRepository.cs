@@ -22,6 +22,10 @@ namespace MyCosts.Models.Repositories
             await db.SaveChangesAsync();
         }
 
+        public async Task<int> CountAsync() => await db.Costs.CountAsync();
+
+        public async Task<int> CountAsync(User user) => await db.Costs.Where(c => c.User == user).CountAsync();
+
         public async Task DeleteAsync(Cost cost)
         {
             if (cost != null)
@@ -43,6 +47,18 @@ namespace MyCosts.Models.Repositories
         public async Task<IEnumerable<Cost>> GetCostsAsync(User user)
         {
             return await db.Costs.Where(c => c.User == user).OrderBy(c => c.Date).ThenBy(c => c.Id).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Cost>> GetCostsAsync(int skip, int take)
+        {
+            var query = db.Costs.OrderBy(c => c.Date).ThenBy(c => c.Id);
+            return await query.Skip(skip).Take(take).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Cost>> GetCostsAsync(User user, int skip, int take)
+        {
+            var query = db.Costs.Where(c => c.User == user).OrderBy(c => c.Date).ThenBy(c => c.Id);
+            return await query.Skip(skip).Take(take).ToListAsync();
         }
     }
 }
