@@ -24,9 +24,6 @@ namespace MyCosts.TagHelpers
         [HtmlAttributeName("per-page")]
         public int PerPage { get; set; }
 
-        [HtmlAttributeNotBound]
-        public int SkipRedords { get => (Page - 1) * PerPage; }
-
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
@@ -42,7 +39,7 @@ namespace MyCosts.TagHelpers
             int countPage = (int)Math.Ceiling(Count / (double)PerPage);
 
             TagBuilder tag = new("ul");
-            tag.AddCssClass("pagination");
+            tag.AddCssClass("pagination justify-content-center");
             tag.InnerHtml.AppendHtml(CreatePaginationListItem("&laquo;", 1, urlHelper, Page == 1));
             if (countPage < 8)
             {   // Если страниц меньше 8, то "..." не появляются при их переключении
@@ -112,7 +109,7 @@ namespace MyCosts.TagHelpers
         {
             TagBuilder item = new("li");
             TagBuilder link = new("a");
-            link.Attributes["href"] = urlHelper.Action(Action ?? "Index", new { page = actionPage, skip = SkipRedords, take = PerPage });
+            link.Attributes["href"] = urlHelper.Action(Action ?? "Index", new { page = actionPage });
             item.AddCssClass("page-item");
             link.AddCssClass("page-link");
             link.InnerHtml.AppendHtml(str);
