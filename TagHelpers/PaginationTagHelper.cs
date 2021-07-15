@@ -24,6 +24,9 @@ namespace MyCosts.TagHelpers
         [HtmlAttributeName("per-page")]
         public int PerPage { get; set; }
 
+        [HtmlAttributeName("save-query")]
+        public bool IsSaveQuery { get; set; }
+
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
@@ -86,30 +89,30 @@ namespace MyCosts.TagHelpers
             output.Content.AppendHtml(tag);
         }
 
-        private TagBuilder CreatePaginationListItem(int pageNumber, IUrlHelper urlHelper)
+        private TagBuilder CreatePaginationListItem(int page, IUrlHelper urlHelper)
         {
             TagBuilder item = new("li");
             TagBuilder link = new("a");
-            if (pageNumber == Page)
+            if (page == Page)
             {
                 item.AddCssClass("active");
             }
             else
             {
-                link.Attributes["href"] = urlHelper.Action(Action ?? "Index", new { page = pageNumber });
+                link.Attributes["href"] = CreateLinkHref(page, urlHelper);
             }
             item.AddCssClass("page-item");
             link.AddCssClass("page-link");;
-            link.InnerHtml.Append(pageNumber.ToString());
+            link.InnerHtml.Append(page.ToString());
             item.InnerHtml.AppendHtml(link);
             return item;
         }
 
-        private TagBuilder CreatePaginationListItem(string str, int actionPage, IUrlHelper urlHelper, bool disabled=false)
+        private TagBuilder CreatePaginationListItem(string str, int page, IUrlHelper urlHelper, bool disabled=false)
         {
             TagBuilder item = new("li");
             TagBuilder link = new("a");
-            link.Attributes["href"] = urlHelper.Action(Action ?? "Index", new { page = actionPage });
+            link.Attributes["href"] = CreateLinkHref(page, urlHelper);
             item.AddCssClass("page-item");
             link.AddCssClass("page-link");
             link.InnerHtml.AppendHtml(str);
@@ -119,6 +122,27 @@ namespace MyCosts.TagHelpers
                 item.AddCssClass("disabled");
             }
             return item;
+        }
+
+        private string CreateLinkHref(int page, IUrlHelper urlHelper)
+        {
+            string href = urlHelper.Action(Action ?? "Index", new { page });
+
+            // Сохранение имеющихся параметров запроса 
+            if (IsSaveQuery)
+            {
+                var query = ViewContext.HttpContext.Request.Query;
+                foreach (var key in query.Keys)
+                {
+                    if (key == "page")
+                    {
+                        continue;
+                    }
+                    href += $"&{key}={query[key]}";
+                }
+            }
+
+            return href;
         }
     }
 }
