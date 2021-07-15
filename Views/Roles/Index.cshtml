@@ -1,4 +1,4 @@
-﻿@model IEnumerable<IdentityRole>
+﻿@model Pagination<IdentityRole>
 @{
     String title = "Роли";
     ViewBag.Title = title;
@@ -21,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Records)
         {
             <tr>
                 <td>@item.Id</td>
@@ -35,5 +35,6 @@
         }
     </tbody>
 </table>
+<pagination page="@Model.Page" per-page="@Model.PerPage" count-records="@Model.CountRecords"></pagination>
 
 <partial name="_ModalWindow" model='new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эту роль?" }' />

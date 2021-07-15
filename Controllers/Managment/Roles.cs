@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyCosts.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace MyCosts.Controllers.Managment
     [Authorize(Roles = "admin")]
     public class Roles : Controller
     {
+        private const int SizePage = 10;
         private RoleManager<IdentityRole> roleManager;
 
         public Roles(RoleManager<IdentityRole> roleManager)
@@ -18,9 +20,19 @@ namespace MyCosts.Controllers.Managment
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await roleManager.Roles.OrderBy(r => r.Name).ToListAsync());
+            var skip = (page - 1) * SizePage;
+            var query = roleManager.Roles.OrderBy(r => r.Name);
+            var roles = await query.Skip(skip).Take(SizePage).ToListAsync();
+            var totalCount = await roleManager.Roles.CountAsync();
+            return View(new Pagination<IdentityRole>
+            {
+                Records = roles,
+                Page = page,
+                PerPage = SizePage,
+                CountRecords = totalCount
+            });
         }
 
         [HttpGet]
