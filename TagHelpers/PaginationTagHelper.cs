@@ -40,7 +40,7 @@ namespace MyCosts.TagHelpers
 
             TagBuilder tag = new("ul");
             tag.AddCssClass("pagination justify-content-center");
-            tag.InnerHtml.AppendHtml(CreatePaginationListItem("&laquo;", 1, urlHelper, Page == 1));
+            tag.InnerHtml.AppendHtml(CreatePaginationListItem("&laquo;", Page == 1 ? 1 : Page - 1, urlHelper, Page == 1));
             if (countPage < 8)
             {   // Если страниц меньше 8, то "..." не появляются при их переключении
                 int currentPage = 1;
@@ -81,7 +81,7 @@ namespace MyCosts.TagHelpers
                 tag.InnerHtml.AppendHtml(CreatePaginationListItem(countPage - 1, urlHelper));
                 tag.InnerHtml.AppendHtml(CreatePaginationListItem(countPage, urlHelper));
             }
-            tag.InnerHtml.AppendHtml(CreatePaginationListItem("&raquo;", countPage, urlHelper, Page == countPage));
+            tag.InnerHtml.AppendHtml(CreatePaginationListItem("&raquo;", Page == countPage ? countPage : Page + 1, urlHelper, Page == countPage));
 
             output.Content.AppendHtml(tag);
         }
