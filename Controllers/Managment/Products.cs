@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MyCosts.Models;
 using MyCosts.Models.Interfaces;
+using MyCosts.ViewModels;
 using System.Threading.Tasks;
 
 namespace MyCosts.Controllers.Managment
@@ -10,6 +11,7 @@ namespace MyCosts.Controllers.Managment
     [Authorize]
     public class Products : Controller
     {
+        private const int SizePage = 10;
         private readonly IProductsRepository productsRepository;
         private readonly ICategoriesRepository categoriesRepository;
 
@@ -20,9 +22,18 @@ namespace MyCosts.Controllers.Managment
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await productsRepository.GetProductsAsync());
+            var skip = (page - 1) * SizePage;
+            var products = await productsRepository.GetProductsAsync(skip, SizePage);
+            var totalCount = await productsRepository.CountAsync();
+            return View(new Pagination<Product>
+            {
+                Records = products,
+                Page = page,
+                PerPage = SizePage,
+                CountRecords = totalCount
+            });
         }
 
         [HttpGet]
