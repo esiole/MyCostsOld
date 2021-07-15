@@ -22,6 +22,8 @@ namespace MyCosts.Models.Repositories
             await db.SaveChangesAsync();
         }
 
+        public async Task<int> CountAsync() => await db.ProductCategories.CountAsync();
+
         public async Task DeleteAsync(ProductCategory category)
         {
             if (category != null)
@@ -36,6 +38,12 @@ namespace MyCosts.Models.Repositories
         public async Task<IEnumerable<ProductCategory>> GetCategoriesAsync()
         {
             return await db.ProductCategories.OrderBy(c => c.Name).ToListAsync();
+        }
+
+        public async Task<IEnumerable<ProductCategory>> GetCategoriesAsync(int skip, int take)
+        {
+            var query = db.ProductCategories.OrderBy(c => c.Name);
+            return await query.Skip(skip).Take(take).ToListAsync();
         }
 
         public async Task<ProductCategory> GetCategoryAsync(int id) => await db.ProductCategories.FirstOrDefaultAsync(с => с.Id == id);

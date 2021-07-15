@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductCategory>
+﻿@model Pagination<ProductCategory>
 @{
     String title = "Категории";
     ViewBag.Title = title;
@@ -20,7 +20,7 @@
             <td>Действия</td>
         </tr>
     </thead>
-    @foreach (var item in Model)
+    @foreach (var item in Model.Records)
     {
         <tr>
             <td>@item.Id</td>
@@ -36,5 +36,6 @@
         </tr>
     }
 </table>
+<pagination page="@Model.Page" per-page="@Model.PerPage" count-records="@Model.CountRecords"></pagination>
 
 <partial name="_ModalWindow" model='new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эту категорию?" }' />
