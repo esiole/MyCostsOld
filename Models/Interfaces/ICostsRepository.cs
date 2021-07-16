@@ -8,6 +8,8 @@ namespace MyCosts.Models.Interfaces
         public Task AddAsync(Cost cost);
         public Task<int> CountAsync();
         public Task<int> CountAsync(User user);
+        public Task<int> CountAsync(string search);
+        public Task<int> CountAsync(User user, string search);
         public Task DeleteAsync(Cost cost);
         public Task DeleteAsync(int id);
         public Task<Cost> GetCostAsync(int id);
@@ -15,5 +17,7 @@ namespace MyCosts.Models.Interfaces
         public Task<IEnumerable<Cost>> GetCostsAsync(User user);
         public Task<IEnumerable<Cost>> GetCostsAsync(int skip, int take);
         public Task<IEnumerable<Cost>> GetCostsAsync(User user, int skip, int take);
+        public Task<IEnumerable<Cost>> GetCostsAsync(int skip, int take, string search);
+        public Task<IEnumerable<Cost>> GetCostsAsync(User user, int skip, int take, string search);
     }
 }

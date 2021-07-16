@@ -30,18 +30,19 @@ namespace MyCosts.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string search = null)
         {
             var user = await userManager.GetUserAsync(User);
             var skip = (page - 1) * SizePage;
-            var costs = await costsRepository.GetCostsAsync(user, skip, SizePage);
-            var totalCount = await costsRepository.CountAsync(user);
+            var costs = await costsRepository.GetCostsAsync(user, skip, SizePage, search);
+            var totalCount = await costsRepository.CountAsync(user, search);
             return View(new Pagination<Cost>
             {
                 Records = costs,
                 Page = page,
                 PerPage = SizePage,
-                CountRecords = totalCount
+                CountRecords = totalCount,
+                Search = search
             });
         }
 
