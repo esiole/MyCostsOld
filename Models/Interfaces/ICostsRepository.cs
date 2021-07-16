@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyCosts.Models.Interfaces
@@ -19,5 +20,6 @@ namespace MyCosts.Models.Interfaces
         public Task<IEnumerable<Cost>> GetCostsAsync(User user, int skip, int take);
         public Task<IEnumerable<Cost>> GetCostsAsync(int skip, int take, string search);
         public Task<IEnumerable<Cost>> GetCostsAsync(User user, int skip, int take, string search);
+        public Task<decimal> GetSumCostsAsync(User user, DateTime start, DateTime? end = null);
     }
 }

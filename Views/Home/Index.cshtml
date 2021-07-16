@@ -1,13 +1,59 @@
-﻿@{
+﻿@model UserHome
+@{
     ViewData["Title"] = "Главная";
 }
 
 @if (User.Identity.IsAuthenticated)
 {
-    <div class="text-center">
-        <p>Главная страница</p>
-        <p>Расходы за сегодня</p>
-        <p>Расходы за месяц</p>
+    <div class="text-center mt-5 mb-4">
+        <h2 class="fs-1 fw-weight-bold fst-italic">Ваши расходы</h2>
+        <hr />
+    </div>
+    <div>
+        <div class="row row-cols-1 row-cols-md-3 mb-5 text-center">
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                    <div class="card-header py-3 text-white bg-primary border-primary">
+                        <h4 class="my-0 fw-normal">За этот месяц</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">
+                            @Model.CurrentMonthSumCosts.ToString("c0")
+                            <small class="text-muted fw-light">/месяц</small>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                    <div class="card-header py-3 text-white bg-primary border-primary">
+                        <h4 class="my-0 fw-normal">За последние 30 дней</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">
+                            @Model.Last30DaysSumCosts.ToString("c0")
+                            <small class="text-muted fw-light">/30 дней</small>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                    <div class="card-header py-3 text-white bg-primary border-primary">
+                        <h4 class="my-0 fw-normal">За год</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">
+                            @Model.YearSumCosts.ToString("c0")
+                            <small class="text-muted fw-light">/год</small>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <a asp-controller="Costs" asp-action="Add" class="btn btn-lg btn-outline-primary">Добавить</a>
     </div>
 }
 else
