@@ -62,7 +62,7 @@ namespace MyCosts.Models.Repositories
             {
                 return await GetCategoriesAsync(skip, take);
             }
-            var query = db.ProductCategories.Where(c => c.Name.Contains(search));
+            var query = db.ProductCategories.Where(c => c.Name.Contains(search)).OrderBy(c => c.Name);
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
