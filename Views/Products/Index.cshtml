@@ -20,7 +20,7 @@
                 </div>
             </form>
             <div class="ms-2 me-5">
-                <partial name="_SearchClearButton" />
+                <partial name="_SearchClearButton" model="String.IsNullOrEmpty(Model.Search)" />
             </div>
             <partial name="_AddButton" />
         </div>
