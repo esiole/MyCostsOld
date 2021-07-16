@@ -73,23 +73,23 @@ namespace MyCosts.Models.Repositories
 
         public async Task<IEnumerable<Cost>> GetCostsAsync()
         {
-            return await db.Costs.OrderBy(c => c.Date).ThenBy(c => c.Id).ToListAsync();
+            return await db.Costs.OrderByDescending(c => c.Date).ThenBy(c => c.Id).ToListAsync();
         }
 
         public async Task<IEnumerable<Cost>> GetCostsAsync(User user)
         {
-            return await db.Costs.Where(c => c.User == user).OrderBy(c => c.Date).ThenBy(c => c.Id).ToListAsync();
+            return await db.Costs.Where(c => c.User == user).OrderByDescending(c => c.Date).ThenBy(c => c.Id).ToListAsync();
         }
 
         public async Task<IEnumerable<Cost>> GetCostsAsync(int skip, int take)
         {
-            var query = db.Costs.OrderBy(c => c.Date).ThenBy(c => c.Id);
+            var query = db.Costs.OrderByDescending(c => c.Date).ThenBy(c => c.Id);
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
         public async Task<IEnumerable<Cost>> GetCostsAsync(User user, int skip, int take)
         {
-            var query = db.Costs.Where(c => c.User == user).OrderBy(c => c.Date).ThenBy(c => c.Id);
+            var query = db.Costs.Where(c => c.User == user).OrderByDescending(c => c.Date).ThenBy(c => c.Id);
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
@@ -103,7 +103,7 @@ namespace MyCosts.Models.Repositories
                                             c.Store.Contains(search) || c.User.Email.Contains(search) ||
                                             c.Date.ToString().Contains(search) || c.Sum.ToString().Contains(search) ||
                                             c.Count.ToString().Contains(search) || c.WeightInKg.ToString().Contains(search))
-                                .OrderBy(c => c.Date).ThenBy(c => c.Id);
+                                .OrderByDescending(c => c.Date).ThenBy(c => c.Id);
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
@@ -118,7 +118,7 @@ namespace MyCosts.Models.Repositories
                                             c.Store.Contains(search) || c.User.Email.Contains(search) ||
                                             c.Date.ToString().Contains(search) || c.Sum.ToString().Contains(search) ||
                                             c.Count.ToString().Contains(search) || c.WeightInKg.ToString().Contains(search)))
-                                .OrderBy(c => c.Date).ThenBy(c => c.Id);
+                                .OrderByDescending(c => c.Date).ThenBy(c => c.Id);
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
