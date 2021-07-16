@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyCosts.Data;
 using MyCosts.Models.Interfaces;
+using MyCosts.ViewModels.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,6 +132,19 @@ namespace MyCosts.Models.Repositories
                 Console.WriteLine(e);
             }
             return await db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now)).SumAsync(c => c.Sum);
+        }
+
+        public async Task<IEnumerable<CostsGroupByCategory>> GroupCostsAsync(User user, DateTime start, DateTime? end = null, int? take = null)
+        {
+            var query = db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now))
+                                    .GroupBy(c => c.Product.Category.Name)
+                                    .Select(g => new CostsGroupByCategory { CategoryName = g.Key, Sum = g.Sum(c => c.Sum) })
+                                    .OrderByDescending(g => g.Sum);
+            if (take.HasValue)
+            {
+                return await query.Take(take.Value).ToListAsync();
+            }
+            return await query.ToListAsync();
         }
     }
 }
