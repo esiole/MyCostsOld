@@ -1,4 +1,4 @@
-﻿namespace MyCosts
+﻿namespace MyCosts.ViewModels
 {
     public class ModalWindow
     {

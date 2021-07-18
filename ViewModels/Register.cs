@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyCosts
+namespace MyCosts.ViewModels
 {
     public class Register
     {

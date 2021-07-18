@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using MyCosts.Models;
 
-namespace MyCosts
+namespace MyCosts.ViewModels
 {
     public class AddProduct
     {

@@ -125,12 +125,6 @@ namespace MyCosts.Models.Repositories
 
         public async Task<decimal> GetSumCostsAsync(User user, DateTime start, DateTime? end = null)
         {
-            System.Linq.Expressions.Expression<Func<Cost, string>> xxx = c => c.Product.Category.Name;
-            var test = db.Costs.GroupBy(c => c.Product.Category.Name).Select(t => new { Date = t.Key, Sum = t.Sum(t => t.Sum) }).OrderByDescending(t => t.Sum).Take(3);
-            foreach (var e in test)
-            {
-                Console.WriteLine(e);
-            }
             return await db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now)).SumAsync(c => c.Sum);
         }
 
