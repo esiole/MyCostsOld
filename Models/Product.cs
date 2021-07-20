@@ -7,6 +7,7 @@ namespace MyCosts.Models
     {
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Не указано название продукта")]
         [Display(Name = "Название")]
         public string Name { get; set; }
 

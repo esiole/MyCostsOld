@@ -6,15 +6,20 @@ namespace MyCosts.Models
     public class Cost
     {
         public int Id { get; set; }
+
+        [Required]
         public string UserId { get; set; }
 
+        [Required(ErrorMessage = "Не выбран продукт")]
         [Display(Name = "Продукт")]
         public int? ProductId { get; set; }
 
+        [Required(ErrorMessage = "Не указана дата")]
         [Display(Name = "Дата")]
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
+        [Required(ErrorMessage = "Не указана потраченная сумма")]
         [Display(Name = "Цена")]
         public decimal Sum { get; set; }
 
