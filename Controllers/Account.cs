@@ -34,6 +34,7 @@ namespace MyCosts.Controllers
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
+                    await _userManager.AddToRoleAsync(user, "user");
                     return RedirectToAction("Index", "Home");
                 }
                 else
