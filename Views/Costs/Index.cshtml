@@ -5,29 +5,41 @@
     ViewBag.IsAllUsers = false;
 }
 
-<div class="d-flex flex-row justify-content-between align-items-center mt-3 mb-2">
-    <div>
-        <h2>@title</h2>
-    </div>
-    <div>
-        <div class="d-flex flex-row">
-            <form asp-action="Index" method="get" class="row g-2">
-                <div class="col-auto">
-                    <input asp-for="Search" class="form-control form-control-lg border-dark" placeholder="Поиск" required />
-                </div>
-                <input name="page" value="1" hidden />
-                <div class="col-auto" style="margin-top: 12px;">
-                    <partial name="_SearchButton" />
-                </div>
-            </form>
-            <div class="ms-2 me-5">
-                <partial name="_SearchClearButton" model="String.IsNullOrEmpty(Model.Search)" />
-            </div>
-            <partial name="_AddButton" />
+@if (Model.CountRecords == 0)
+{
+    <div class="w-75 mx-auto mt-5">
+        <h2 class="text-center mb-3">Добавьте свои расходы, чтобы они отобразились в таблице</h2>
+        <div class="d-grid gap-2 col-6 mx-auto">
+            <a asp-controller="Costs" asp-action="Add" class="btn btn-lg btn-outline-primary">Добавить</a>
         </div>
     </div>
-</div>
-<partial name="_CostsTable" model="Model.Records" />
-<pagination page="@Model.Page" per-page="@Model.PerPage" count-records="@Model.CountRecords" save-query="true"></pagination>
+}
+else
+{
+    <div class="d-flex flex-row justify-content-between align-items-center mt-3 mb-2">
+        <div>
+            <h2>@title</h2>
+        </div>
+        <div>
+            <div class="d-flex flex-row">
+                <form asp-action="Index" method="get" class="row g-2">
+                    <div class="col-auto">
+                        <input asp-for="Search" class="form-control form-control-lg border-dark" placeholder="Поиск" required />
+                    </div>
+                    <input name="page" value="1" hidden />
+                    <div class="col-auto" style="margin-top: 12px;">
+                        <partial name="_SearchButton" />
+                    </div>
+                </form>
+                <div class="ms-2 me-5">
+                    <partial name="_SearchClearButton" model="String.IsNullOrEmpty(Model.Search)" />
+                </div>
+                <partial name="_AddButton" />
+            </div>
+        </div>
+    </div>
+    <partial name="_CostsTable" model="Model.Records" />
+    <pagination page="@Model.Page" per-page="@Model.PerPage" count-records="@Model.CountRecords" save-query="true"></pagination>
 
-<partial name="_ModalWindow" model='new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эти расходы?"}' />
+    <partial name="_ModalWindow" model='new ModalWindow { Title = "Предупреждение", Message = "Вы действительно хотите удалить эти расходы?"}' />
+}

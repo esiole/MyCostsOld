@@ -1,17 +1,9 @@
-﻿using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewComponents;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace MyCosts
+namespace MyCosts.Components
 {
-    [ViewComponent]
-    public class NonAuthorized
+    public class NonAuthorized : ViewComponent
     {
-        public IViewComponentResult Invoke()
-        {
-            return new HtmlContentViewComponentResult(
-                new HtmlString($"<div><p><b>Авторизуйтесь, чтобы использовать приложение!</b></p></div>")
-            );
-        }
+        public IViewComponentResult Invoke() => View();
     }
 }
