@@ -37,17 +37,17 @@ namespace MyCosts.Controllers
             return View(new UserHome {
                 Last30DaysSumCosts = new CostsForPeriod {
                     Sum = await costsRepository.GetSumCostsAsync(user, DateTime.Now.AddDays(-30)),
-                    CostsByCategory = await costsRepository.GroupCostsAsync(user, DateTime.Now.AddDays(-30), take: 3),
+                    CostsByCategory = await costsRepository.GroupCostsByCategoryAsync(user, DateTime.Now.AddDays(-30), take: 3),
                     PreviousPeriodSum = await costsRepository.GetSumCostsAsync(user, DateTime.Now.AddDays(-60), DateTime.Now.AddDays(-30)),
                 },
                 CurrentMonthSumCosts = new CostsForPeriod {
                     Sum = await costsRepository.GetSumCostsAsync(user, previousMonth),
-                    CostsByCategory = await costsRepository.GroupCostsAsync(user, previousMonth, take:3),
+                    CostsByCategory = await costsRepository.GroupCostsByCategoryAsync(user, previousMonth, take:3),
                     PreviousPeriodSum = await costsRepository.GetSumCostsAsync(user, previousPreviousMonth, previousMonth),
                 },
                 YearSumCosts = new CostsForPeriod {
                     Sum = await costsRepository.GetSumCostsAsync(user, DateTime.Now.AddYears(-1)),
-                    CostsByCategory = await costsRepository.GroupCostsAsync(user, DateTime.Now.AddYears(-1), take: 3),
+                    CostsByCategory = await costsRepository.GroupCostsByCategoryAsync(user, DateTime.Now.AddYears(-1), take: 3),
                     PreviousPeriodSum = await costsRepository.GetSumCostsAsync(user, DateTime.Now.AddYears(-2), DateTime.Now.AddYears(-1)),
                 }
             });

@@ -133,12 +133,25 @@ namespace MyCosts.Models.Repositories
             return await db.Costs.Where(c => c.User == user && c.Date.Year == month.Year && c.Date.Month == month.Month).SumAsync(c => c.Sum);
         }
 
-        public async Task<IEnumerable<CostsGroupBy>> GroupCostsAsync(User user, DateTime start, DateTime? end = null, int? take = null)
+        public async Task<IEnumerable<CostsGroupBy>> GroupCostsByCategoryAsync(User user, DateTime start, DateTime? end = null, int? take = null)
         {
             var query = db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now))
-                                    .GroupBy(c => c.Product.Category.Name)
-                                    .Select(g => new CostsGroupBy { GroupName = g.Key, Sum = g.Sum(c => c.Sum) })
-                                    .OrderByDescending(g => g.Sum);
+                .GroupBy(c => c.Product.Category.Name)
+                .Select(g => new CostsGroupBy { GroupName = g.Key, Sum = g.Sum(c => c.Sum) })
+                .OrderByDescending(g => g.Sum);
+            if (take.HasValue)
+            {
+                return await query.Take(take.Value).ToListAsync();
+            }
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<CostsGroupBy>> GroupCostsByProductAsync(User user, DateTime start, DateTime? end = null, int? take = null)
+        {
+            var query = db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now))
+                .GroupBy(c => c.Product.Name)
+                .Select(g => new CostsGroupBy { GroupName = g.Key, Sum = g.Sum(c => c.Sum) })
+                .OrderByDescending(g => g.Sum);
             if (take.HasValue)
             {
                 return await query.Take(take.Value).ToListAsync();

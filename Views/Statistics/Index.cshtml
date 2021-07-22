@@ -6,13 +6,19 @@
     <p>Статистика</p>
 </div>
 
+<div><canvas id="barChart"></canvas></div>
+<div><canvas id="pieChart"></canvas></div>
 <div><canvas id="lineChart"></canvas></div>
 
-@{ChartJSCore.Models.Chart chart = (ChartJSCore.Models.Chart)ViewData["chart"]; }
+@{ChartJSCore.Models.Chart barChart = (ChartJSCore.Models.Chart)ViewData["barChart"]; }
+@{ChartJSCore.Models.Chart pieChart = (ChartJSCore.Models.Chart)ViewData["pieChart"]; }
+@{ChartJSCore.Models.Chart lineChart = (ChartJSCore.Models.Chart)ViewData["lineChart"]; }
 
 @section Scripts {
     <script src="~/lib/chartjs/chart.js"></script>
     <script>
-        @Html.Raw(chart.CreateChartCode("lineChart"));
+        @Html.Raw(barChart.CreateChartCode("barChart"));
+        @Html.Raw(pieChart.CreateChartCode("pieChart"));
+        @Html.Raw(lineChart.CreateChartCode("lineChart"));
     </script>
 }
