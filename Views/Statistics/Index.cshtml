@@ -6,32 +6,13 @@
     <p>Статистика</p>
 </div>
 
-@*@{
-    var mychart = new System.Web.Helpers.Chart(width: 600, height: 400)
-        .AddTitle("chart title")
-        .AddSeries(
-            name: "employee",
-            xValue: new[] { "peter", "andrew", "julie", "mary", "dave" },
-            yValues: new[] { "2", "6", "4", "5", "3" })
-        .Write();
-}*@
+<div><canvas id="lineChart"></canvas></div>
 
-@*@(Html.ShieldChart()
-    .Name("chart")
-    .Theme("light")
-    .Export(false)
-    .PrimaryHeader(header => header.Text("Browsers Popularity amongst Users"))
-    .ChartLegend(legend=>legend.Enabled(true))
-    .SeriesSettings(setting=>setting.Pie(pie=>pie
-        .EnablePointSelection(true)))      
-    .DataSeries(dataSeries => dataSeries.Pie()
-        .CollectionAlias("Usage")
-        .Data(new object[] 
-        {
-            new object[] {"Firefox", 44.2}, 
-            new object[] {"IE7", 26.6}, 
-            new { collectionAlias = "IE6", y = 20, selected = true },
-            new object[] {"Chrome", 3.1}, 
-            new object[] {"Other", 5.4}           
-        }))   
-)*@
+@{ChartJSCore.Models.Chart chart = (ChartJSCore.Models.Chart)ViewData["chart"]; }
+
+@section Scripts {
+    <script src="~/lib/chartjs/chart.js"></script>
+    <script>
+        @Html.Raw(chart.CreateChartCode("lineChart"));
+    </script>
+}
