@@ -128,11 +128,16 @@ namespace MyCosts.Models.Repositories
             return await db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now)).SumAsync(c => c.Sum);
         }
 
-        public async Task<IEnumerable<CostsGroupByCategory>> GroupCostsAsync(User user, DateTime start, DateTime? end = null, int? take = null)
+        public async Task<decimal> GetSumCostsPerMonthAsync(User user, DateTime month)
+        {
+            return await db.Costs.Where(c => c.User == user && c.Date.Year == month.Year && c.Date.Month == month.Month).SumAsync(c => c.Sum);
+        }
+
+        public async Task<IEnumerable<CostsGroupBy>> GroupCostsAsync(User user, DateTime start, DateTime? end = null, int? take = null)
         {
             var query = db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now))
                                     .GroupBy(c => c.Product.Category.Name)
-                                    .Select(g => new CostsGroupByCategory { CategoryName = g.Key, Sum = g.Sum(c => c.Sum) })
+                                    .Select(g => new CostsGroupBy { GroupName = g.Key, Sum = g.Sum(c => c.Sum) })
                                     .OrderByDescending(g => g.Sum);
             if (take.HasValue)
             {

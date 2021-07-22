@@ -5,7 +5,7 @@ namespace MyCosts.ViewModels.Statistics
 {
     public class CostsForPeriod
     {
-        public IEnumerable<CostsGroupByCategory> CostsByCategory { get; set; }
+        public IEnumerable<CostsGroupBy> CostsByCategory { get; set; }
         public decimal Sum { get; set; }
         public decimal PreviousPeriodSum { get; set; }
         public bool IsCostsLower { get => Sum < PreviousPeriodSum; }

@@ -22,6 +22,7 @@ namespace MyCosts.Models.Interfaces
         public Task<IEnumerable<Cost>> GetCostsAsync(int skip, int take, string search);
         public Task<IEnumerable<Cost>> GetCostsAsync(User user, int skip, int take, string search);
         public Task<decimal> GetSumCostsAsync(User user, DateTime start, DateTime? end = null);
-        public Task<IEnumerable<CostsGroupByCategory>> GroupCostsAsync(User user, DateTime start, DateTime? end = null, int? take = null);
+        public Task<decimal> GetSumCostsPerMonthAsync(User user, DateTime month);
+        public Task<IEnumerable<CostsGroupBy>> GroupCostsAsync(User user, DateTime start, DateTime? end = null, int? take = null);
     }
 }

@@ -12,7 +12,7 @@
         @foreach (var group in Model.CostsByCategory)
         {
             <tr>
-                <td class="text-end pe-2" style="width: 72%;">@group.CategoryName:</td>
+                <td class="text-end pe-2" style="width: 72%;">@group.GroupName:</td>
                 <td class="text-end">
                     <span style="font-style: italic;">@group.Sum.ToString("c")</span>
                 </td>
