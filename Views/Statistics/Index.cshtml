@@ -9,10 +9,12 @@
 <div><canvas id="barChart"></canvas></div>
 <div><canvas id="pieChart"></canvas></div>
 <div><canvas id="lineChart"></canvas></div>
+<div><canvas id="topProductsLineChart"></canvas></div>
 
 @{ChartJSCore.Models.Chart barChart = (ChartJSCore.Models.Chart)ViewData["barChart"]; }
 @{ChartJSCore.Models.Chart pieChart = (ChartJSCore.Models.Chart)ViewData["pieChart"]; }
 @{ChartJSCore.Models.Chart lineChart = (ChartJSCore.Models.Chart)ViewData["lineChart"]; }
+@{ChartJSCore.Models.Chart topProductsLineChart = (ChartJSCore.Models.Chart)ViewData["topProductsLineChart"]; }
 
 @section Scripts {
     <script src="~/lib/chartjs/chart.js"></script>
@@ -20,5 +22,6 @@
         @Html.Raw(barChart.CreateChartCode("barChart"));
         @Html.Raw(pieChart.CreateChartCode("pieChart"));
         @Html.Raw(lineChart.CreateChartCode("lineChart"));
+        @Html.Raw(topProductsLineChart.CreateChartCode("topProductsLineChart"));
     </script>
 }

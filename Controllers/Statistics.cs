@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyCosts.Extensions;
 using MyCosts.Models;
 using MyCosts.Models.Interfaces;
+using MyCosts.ViewModels.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,11 +19,15 @@ namespace MyCosts.Controllers
     {
         private readonly ICostsRepository costsRepository;
         private readonly UserManager<User> userManager;
+        private readonly Random random;
+
+        public Color NextColor => Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
 
         public Statistics(ICostsRepository costsRepository, UserManager<User> userManager)
         {
             this.costsRepository = costsRepository;
             this.userManager = userManager;
+            random = new Random();
         }
 
         [HttpGet]
@@ -31,65 +36,67 @@ namespace MyCosts.Controllers
             DateTime start = DateTime.Now.AddYears(-1);
             DateTime end = DateTime.Now;
             if (start > end) throw new ArgumentException("Дата start не может быть больше, чем дата end");
-
             var user = await userManager.GetUserAsync(User);
-            Random random = new();
 
-            var groupCostsByProduct = await costsRepository.GroupCostsByProductAsync(user, start, take: 30);
-            List<string> products = new();
-            List<double?> costsByProducts = new();
-            List<ChartColor> colorsForBar = new();
+            var groupCostsByProduct = await costsRepository.GroupCostsByProductAsync(user, start, take: 20);
+            List<string> productLabels = new();
+            ChartJSDataset productsDataset = new("Расходы по продуктам");
             foreach (var cbp in groupCostsByProduct)
             {
-                products.Add(cbp.GroupName);
-                costsByProducts.Add(Convert.ToDouble(cbp.Sum));
-
-                Color randColor = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
-                colorsForBar.Add(ChartColor.FromHexString(randColor.ToHexString()));
+                productLabels.Add(cbp.GroupName);
+                productsDataset.Add(Convert.ToDouble(cbp.Sum), ChartColor.FromHexString(NextColor.ToHexString()));
             }
 
             var groupCostsByCategory = await costsRepository.GroupCostsByCategoryAsync(user, start);
-
-            List<string> categories = new();
-            List<double?> costsByCategories = new();
-            List<ChartColor> colorsForPie = new();
+            List<string> categoryLabels = new();
+            ChartJSDataset costsDataset = new("Расходы по категориям");
             foreach (var cbc in groupCostsByCategory)
             {
-                categories.Add(cbc.GroupName);
-                costsByCategories.Add(Convert.ToDouble(cbc.Sum));
-
-                Color randColor = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
-                colorsForPie.Add(ChartColor.FromHexString(randColor.ToHexString()));
+                categoryLabels.Add(cbc.GroupName);
+                costsDataset.Add(Convert.ToDouble(cbc.Sum), ChartColor.FromHexString(NextColor.ToHexString()));
             }
 
-            List<string> months = new();
-            List<double?> costsByMonths = new();
-            DateTime temp = start;
-            while (temp < end)
+            List<string> monthLabels = new();
+            ChartJSDataset costsSumDataset = new("Расходы за месяц", NextColor);
+            List<string> top5ProductNames = new() { productLabels[0], productLabels[1], productLabels[2], productLabels[3], productLabels[4] };
+            var top5ProductsDataset = new ChartJSDataset[5];
+            for (int i = 0; i < top5ProductsDataset.Length; i++)
             {
-                decimal sum = await costsRepository.GetSumCostsPerMonthAsync(user, temp);
-                months.Add(temp.ToString("MMMM") + $" {temp.Year}");
-                costsByMonths.Add(Convert.ToDouble(sum));
-                temp = temp.AddMonths(1);
+                top5ProductsDataset[i] = new ChartJSDataset(top5ProductNames[i], NextColor);
+            }
+            DateTime tempDate = start;
+            while (tempDate < end)
+            {
+                monthLabels.Add(tempDate.ToString("MMMM") + $" {tempDate.Year}");
+                decimal sumCostsPerMonth = await costsRepository.GetSumCostsPerMonthAsync(user, tempDate);
+                costsSumDataset.AddValue(Convert.ToDouble(sumCostsPerMonth));
+
+                for (int i = 0; i < top5ProductsDataset.Length; i++)
+                {
+                    decimal productSumPerMonth = await costsRepository.GetSumCostsPerMonthAsync(user, top5ProductNames[i], tempDate);
+                    top5ProductsDataset[i].AddValue(Convert.ToDouble(productSumPerMonth));
+                }
+
+                tempDate = tempDate.AddMonths(1);
             }
 
-            Color randomColor = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
-            ViewData["barChart"] = GenerateBarChart("Расходы по продуктам", costsByProducts, products, colorsForBar);
-            ViewData["pieChart"] = GeneratePieChart("Расходы по категориям", costsByCategories, categories, colorsForPie);
-            ViewData["lineChart"] = GenerateLineChart("Расходы за месяц", costsByMonths, months, randomColor);
+            ViewData["barChart"] = GenerateBarChart(productsDataset, productLabels);
+            ViewData["pieChart"] = GeneratePieChart(costsDataset, categoryLabels);
+            ViewData["lineChart"] = GenerateLineChart(costsSumDataset, monthLabels);
+            ViewData["topProductsLineChart"] = GenerateLineChart(top5ProductsDataset, monthLabels);
 
             return View();
         }
 
         [NonAction]
-        public static Chart GenerateBarChart(string title, List<double?> values, List<string> labels, List<ChartColor> colors)
+        public static Chart GenerateBarChart(ChartJSDataset chartDataset, List<string> labels)
         {
             BarDataset dataset = new()
             {
-                Label = title,
-                Data = values,
-                BackgroundColor = colors,
-                BorderColor = colors,
+                Label = chartDataset.Title,
+                Data = chartDataset.Values,
+                BackgroundColor = chartDataset.Colors,
+                BorderColor = chartDataset.Colors,
                 BorderWidth = new List<int>() { 1 }
             };
 
@@ -151,14 +158,14 @@ namespace MyCosts.Controllers
         }
 
         [NonAction]
-        public static Chart GeneratePieChart(string title, List<double?> values, List<string> labels, List<ChartColor> colors)
+        public static Chart GeneratePieChart(ChartJSDataset chartDataset, List<string> labels)
         {
             PieDataset dataset = new()
             {
-                Label = title,
-                BackgroundColor = colors,
-                HoverBackgroundColor = colors,
-                Data = values
+                Label = chartDataset.Title,
+                BackgroundColor = chartDataset.Colors,
+                HoverBackgroundColor = chartDataset.Colors,
+                Data = chartDataset.Values
             };
 
             ChartJSCore.Models.Data data = new()
@@ -175,37 +182,43 @@ namespace MyCosts.Controllers
             };
         }
 
+        [NonAction]
+        public static Chart GenerateLineChart(ChartJSDataset chartDataset, List<string> labels)
+        {
+            return GenerateLineChart(new[] { chartDataset }, labels);
+        }
 
         [NonAction]
-        public static Chart GenerateLineChart(string title, List<double?> values, List<string> labels, Color? color = null)
+        public static Chart GenerateLineChart(ChartJSDataset[] chartDatasets, List<string> labels)
         {
-            color ??= Color.IndianRed;
-            LineDataset dataset = new()
-            {
-                Label = title,
-                Data = values,
-                Fill = "false",
-                LineTension = 0.1,
-                BackgroundColor = ChartColor.FromRgba(color.Value.R, color.Value.G, color.Value.B, 0.4),
-                BorderColor = ChartColor.FromRgba(color.Value.R, color.Value.G, color.Value.B, 1),
-                BorderCapStyle = "butt",
-                BorderDash = new List<int> { },
-                BorderDashOffset = 0.0,
-                BorderJoinStyle = "miter",
-                PointBorderWidth = new List<int> { 1 },
-                PointHoverRadius = new List<int> { 5 },
-                PointHoverBorderWidth = new List<int> { 2 },
-                PointRadius = new List<int> { 1 },
-                PointHitRadius = new List<int> { 10 },
-                SpanGaps = false
-            };
-
             ChartJSCore.Models.Data data = new()
             {
                 Labels = labels,
                 Datasets = new List<Dataset>()
             };
-            data.Datasets.Add(dataset);
+
+            foreach (ChartJSDataset dataset in chartDatasets)
+            {
+                data.Datasets.Add(new LineDataset
+                {
+                    Label = dataset.Title,
+                    Data = dataset.Values,
+                    Fill = "false",
+                    LineTension = 0.1,
+                    BackgroundColor = ChartColor.FromRgba(dataset.Color.R, dataset.Color.G, dataset.Color.B, 0.4),
+                    BorderColor = ChartColor.FromRgba(dataset.Color.R, dataset.Color.G, dataset.Color.B, 1),
+                    BorderCapStyle = "butt",
+                    BorderDash = new List<int> { },
+                    BorderDashOffset = 0.0,
+                    BorderJoinStyle = "miter",
+                    PointBorderWidth = new List<int> { 1 },
+                    PointHoverRadius = new List<int> { 5 },
+                    PointHoverBorderWidth = new List<int> { 2 },
+                    PointRadius = new List<int> { 1 },
+                    PointHitRadius = new List<int> { 10 },
+                    SpanGaps = false
+                });
+            }
 
             Options options = new()
             {

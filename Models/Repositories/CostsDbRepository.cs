@@ -133,6 +133,13 @@ namespace MyCosts.Models.Repositories
             return await db.Costs.Where(c => c.User == user && c.Date.Year == month.Year && c.Date.Month == month.Month).SumAsync(c => c.Sum);
         }
 
+        public async Task<decimal> GetSumCostsPerMonthAsync(User user, string productName, DateTime month)
+        {
+            return await db.Costs
+                .Where(c => c.User == user && c.Product.Name == productName && c.Date.Year == month.Year && c.Date.Month == month.Month)
+                .SumAsync(c => c.Sum);
+        }
+
         public async Task<IEnumerable<CostsGroupBy>> GroupCostsByCategoryAsync(User user, DateTime start, DateTime? end = null, int? take = null)
         {
             var query = db.Costs.Where(c => c.User == user && start < c.Date && c.Date <= (end ?? DateTime.Now))
