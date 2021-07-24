@@ -1,27 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Статистика";
+﻿@model GetStatistic
+@{
+    string title = "Статистика";
+    ViewData["Title"] = title;
 }
 
-<div class="text-center">
-    <p>Статистика</p>
-</div>
+<h2 class="text-center mt-1">@title</h2>
+<hr />
+<form asp-action="Index" method="get" class="mt-4 mb-4 mx-auto w-75">
+    <div class="row">
+        <div class="col">
+            <div class="form-floating">
+                <input asp-for="Start" class="form-control form-control-lg border-dark" />
+                <label asp-for="Start" class="form-label"></label>
+                <span asp-validation-for="Start" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-floating">
+                <input asp-for="End" class="form-control form-control-lg border-dark" />
+                <label asp-for="End" class="form-label"></label>
+                <span asp-validation-for="End" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col">
+            <div style="margin-top: 5px;">
+                <input type="submit" class="btn btn-lg btn-success btn-submit" value="Построить" />
+            </div>
+        </div>
+    </div>
+</form>
+<hr />
+@if (Model.IsCompleteStatistic)
+{
+    <div class="mb-5 text-center">
+        <h3 class="mt-4 mb-4">Всего потрачено за период: @Model.SumCosts.ToString("C")</h3>
+        <hr />
+        <div class="mt-4">
+            <h3 class="mb-3">Продукты с наибольшими расходами за период</h3>
+            <canvas id="productsBarChart" style="max-height: 600px;"></canvas>
+        </div>
+        <hr />
+        <div class="mt-4">
+            <h3 class="mb-3">Доля расходов по категориям за период</h3>
+            <canvas id="categoriesPieChart" class="mx-auto" style="max-height: 750px; max-width: 750px;"></canvas>
+        </div>
+        <hr />
+        <div class="mt-4">
+            <h3 class="mb-3">Распределение расходов по месяцам за период</h3>
+            <canvas id="costsLineChart" style="max-height: 600px;"></canvas>
+        </div>
+        <hr />
+        <div class="mt-4">
+            <h3 class="mb-3">Продукты с наибольшими расходами за период по месяцам</h3>
+            <canvas id="topProductsLineChart" style="max-height: 600px;"></canvas>
+        </div>
+    </div>
 
-<div><canvas id="barChart"></canvas></div>
-<div><canvas id="pieChart"></canvas></div>
-<div><canvas id="lineChart"></canvas></div>
-<div><canvas id="topProductsLineChart"></canvas></div>
+    ChartJSCore.Models.Chart productsBarChart = (ChartJSCore.Models.Chart)ViewData["productsBarChart"];
+    ChartJSCore.Models.Chart categoriesPieChart = (ChartJSCore.Models.Chart)ViewData["categoriesPieChart"];
+    ChartJSCore.Models.Chart costsLineChart = (ChartJSCore.Models.Chart)ViewData["costsLineChart"];
+    ChartJSCore.Models.Chart topProductsLineChart = (ChartJSCore.Models.Chart)ViewData["topProductsLineChart"];
 
-@{ChartJSCore.Models.Chart barChart = (ChartJSCore.Models.Chart)ViewData["barChart"]; }
-@{ChartJSCore.Models.Chart pieChart = (ChartJSCore.Models.Chart)ViewData["pieChart"]; }
-@{ChartJSCore.Models.Chart lineChart = (ChartJSCore.Models.Chart)ViewData["lineChart"]; }
-@{ChartJSCore.Models.Chart topProductsLineChart = (ChartJSCore.Models.Chart)ViewData["topProductsLineChart"]; }
-
-@section Scripts {
-    <script src="~/lib/chartjs/chart.js"></script>
-    <script>
-        @Html.Raw(barChart.CreateChartCode("barChart"));
-        @Html.Raw(pieChart.CreateChartCode("pieChart"));
-        @Html.Raw(lineChart.CreateChartCode("lineChart"));
-        @Html.Raw(topProductsLineChart.CreateChartCode("topProductsLineChart"));
-    </script>
+    @section Scripts {
+        <script src="~/lib/chartjs/chart.js"></script>
+        <script>
+            @Html.Raw(productsBarChart.CreateChartCode("productsBarChart"));
+            @Html.Raw(categoriesPieChart.CreateChartCode("categoriesPieChart"));
+            @Html.Raw(costsLineChart.CreateChartCode("costsLineChart"));
+            @Html.Raw(topProductsLineChart.CreateChartCode("topProductsLineChart"));
+        </script>
+    }
 }

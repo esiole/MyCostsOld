@@ -31,23 +31,30 @@ namespace MyCosts.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(GetStatistic getStatistic = null)
         {
-            DateTime start = DateTime.Now.AddYears(-1);
-            DateTime end = DateTime.Now;
-            if (start > end) throw new ArgumentException("Дата start не может быть больше, чем дата end");
+            if (getStatistic.Start == default || getStatistic.End == default)
+            {
+                getStatistic =  new GetStatistic { Start = DateTime.Now.AddYears(-1), End = DateTime.Now };
+            }
+            else if (!ModelState.IsValid)
+            {
+                return View(getStatistic);
+            }
             var user = await userManager.GetUserAsync(User);
 
-            var groupCostsByProduct = await costsRepository.GroupCostsByProductAsync(user, start, take: 20);
+            getStatistic.SumCosts = await costsRepository.GetSumCostsAsync(user, getStatistic.Start, getStatistic.End);
+
+            var groupCostsByProduct = await costsRepository.GroupCostsByProductAsync(user, getStatistic.Start, getStatistic.End, take: 20);
             List<string> productLabels = new();
-            ChartJSDataset productsDataset = new("Расходы по продуктам");
+            ChartJSDataset productsDataset = new("Расходы за период");
             foreach (var cbp in groupCostsByProduct)
             {
                 productLabels.Add(cbp.GroupName);
                 productsDataset.Add(Convert.ToDouble(cbp.Sum), ChartColor.FromHexString(NextColor.ToHexString()));
             }
 
-            var groupCostsByCategory = await costsRepository.GroupCostsByCategoryAsync(user, start);
+            var groupCostsByCategory = await costsRepository.GroupCostsByCategoryAsync(user, getStatistic.Start, getStatistic.End);
             List<string> categoryLabels = new();
             ChartJSDataset costsDataset = new("Расходы по категориям");
             foreach (var cbc in groupCostsByCategory)
@@ -64,8 +71,8 @@ namespace MyCosts.Controllers
             {
                 top5ProductsDataset[i] = new ChartJSDataset(top5ProductNames[i], NextColor);
             }
-            DateTime tempDate = start;
-            while (tempDate < end)
+            DateTime tempDate = getStatistic.Start;
+            while (tempDate < getStatistic.End)
             {
                 monthLabels.Add(tempDate.ToString("MMMM") + $" {tempDate.Year}");
                 decimal sumCostsPerMonth = await costsRepository.GetSumCostsPerMonthAsync(user, tempDate);
@@ -80,12 +87,13 @@ namespace MyCosts.Controllers
                 tempDate = tempDate.AddMonths(1);
             }
 
-            ViewData["barChart"] = GenerateBarChart(productsDataset, productLabels);
-            ViewData["pieChart"] = GeneratePieChart(costsDataset, categoryLabels);
-            ViewData["lineChart"] = GenerateLineChart(costsSumDataset, monthLabels);
+            ViewData["productsBarChart"] = GenerateBarChart(productsDataset, productLabels);
+            ViewData["categoriesPieChart"] = GeneratePieChart(costsDataset, categoryLabels);
+            ViewData["costsLineChart"] = GenerateLineChart(costsSumDataset, monthLabels);
             ViewData["topProductsLineChart"] = GenerateLineChart(top5ProductsDataset, monthLabels);
+            getStatistic.IsCompleteStatistic = true;
 
-            return View();
+            return View(getStatistic);
         }
 
         [NonAction]
