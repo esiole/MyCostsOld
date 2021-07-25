@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 
 namespace MyCosts.Models
 {
@@ -35,5 +36,8 @@ namespace MyCosts.Models
 
         public virtual Product Product { get; set; }
         public virtual User User { get; set; }
+
+        public static readonly Expression<Func<Cost, decimal>> SumExpression = 
+            cost => cost.Count.HasValue ? cost.Count.Value * cost.Sum : cost.Sum;
     }
 }
