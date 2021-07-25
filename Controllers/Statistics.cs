@@ -65,8 +65,13 @@ namespace MyCosts.Controllers
 
             List<string> monthLabels = new();
             ChartJSDataset costsSumDataset = new("Расходы за месяц", NextColor);
-            List<string> top5ProductNames = new() { productLabels[0], productLabels[1], productLabels[2], productLabels[3], productLabels[4] };
-            var top5ProductsDataset = new ChartJSDataset[5];
+            List<string> top5ProductNames = new();
+            for (int i = 0; i < 5 && i < productLabels.Count; i++)
+            {
+                top5ProductNames.Add(productLabels[i]);
+            }
+            int countTopProducts = productLabels.Count >= 5 ? 5 : productLabels.Count;
+            var top5ProductsDataset = new ChartJSDataset[countTopProducts];
             for (int i = 0; i < top5ProductsDataset.Length; i++)
             {
                 top5ProductsDataset[i] = new ChartJSDataset(top5ProductNames[i], NextColor);
