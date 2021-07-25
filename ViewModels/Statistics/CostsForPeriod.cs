@@ -8,7 +8,7 @@ namespace MyCosts.ViewModels.Statistics
         public IEnumerable<CostsGroupBy> CostsByCategory { get; set; }
         public decimal Sum { get; set; }
         public decimal PreviousPeriodSum { get; set; }
-        public bool IsCostsLower { get => Sum < PreviousPeriodSum; }
+        public bool IsCostsLower { get => Sum <= PreviousPeriodSum; }
         public decimal DeltaSum { get => Math.Abs(Sum - PreviousPeriodSum); }
     }
 }
