@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Drawing;
 
 namespace MyCosts.ViewModels.Statistics
 {
@@ -11,7 +10,7 @@ namespace MyCosts.ViewModels.Statistics
         public string Title { get; init; }
         public ImmutableList<double?> Values { get; private set; }
         public List<ChartColor> Colors { get; init; }
-        public Color Color  { get; init; }
+        public ChartColor Color  { get; init; }
 
         public ChartJSDataset(string title)
         {
@@ -21,7 +20,7 @@ namespace MyCosts.ViewModels.Statistics
             Colors = new List<ChartColor>();
         }
 
-        public ChartJSDataset(string title, Color color) : this(title)
+        public ChartJSDataset(string title, ChartColor color) : this(title)
         {
             Color = color;
         }

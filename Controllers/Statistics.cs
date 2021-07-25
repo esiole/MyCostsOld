@@ -22,6 +22,7 @@ namespace MyCosts.Controllers
         private readonly Random random;
 
         public Color NextColor => Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
+        public ChartColor NextChartColor => ChartColor.FromHexString(NextColor.ToHexString());
 
         public Statistics(ICostsRepository costsRepository, UserManager<User> userManager)
         {
@@ -47,11 +48,13 @@ namespace MyCosts.Controllers
 
             var groupCostsByProduct = await costsRepository.GroupCostsByProductAsync(user, getStatistic.Start, getStatistic.End, take: 20);
             List<string> productLabels = new();
-            ChartJSDataset productsDataset = new("Расходы за период");
+            List<ChartJSDataset> productsDatasets = new();
             foreach (var cbp in groupCostsByProduct)
             {
                 productLabels.Add(cbp.GroupName);
-                productsDataset.Add(Convert.ToDouble(cbp.Sum), ChartColor.FromHexString(NextColor.ToHexString()));
+                ChartJSDataset dataset = new(cbp.GroupName);
+                dataset.Add(Convert.ToDouble(cbp.Sum), NextChartColor);
+                productsDatasets.Add(dataset);
             }
 
             var groupCostsByCategory = await costsRepository.GroupCostsByCategoryAsync(user, getStatistic.Start, getStatistic.End);
@@ -60,11 +63,11 @@ namespace MyCosts.Controllers
             foreach (var cbc in groupCostsByCategory)
             {
                 categoryLabels.Add(cbc.GroupName);
-                costsDataset.Add(Convert.ToDouble(cbc.Sum), ChartColor.FromHexString(NextColor.ToHexString()));
+                costsDataset.Add(Convert.ToDouble(cbc.Sum), NextChartColor);
             }
 
             List<string> monthLabels = new();
-            ChartJSDataset costsSumDataset = new("Расходы за месяц", NextColor);
+            ChartJSDataset costsSumDataset = new("Расходы за месяц", NextChartColor);
             List<string> top5ProductNames = new();
             for (int i = 0; i < 5 && i < productLabels.Count; i++)
             {
@@ -74,7 +77,7 @@ namespace MyCosts.Controllers
             var top5ProductsDataset = new ChartJSDataset[countTopProducts];
             for (int i = 0; i < top5ProductsDataset.Length; i++)
             {
-                top5ProductsDataset[i] = new ChartJSDataset(top5ProductNames[i], NextColor);
+                top5ProductsDataset[i] = new ChartJSDataset(top5ProductNames[i], NextChartColor);
             }
             DateTime tempDate = getStatistic.Start;
             while (tempDate < getStatistic.End)
@@ -92,7 +95,7 @@ namespace MyCosts.Controllers
                 tempDate = tempDate.AddMonths(1);
             }
 
-            ViewData["productsBarChart"] = GenerateBarChart(productsDataset, productLabels);
+            ViewData["productsBarChart"] = GenerateBarChart(productsDatasets);
             ViewData["categoriesPieChart"] = GeneratePieChart(costsDataset, categoryLabels);
             ViewData["costsLineChart"] = GenerateLineChart(costsSumDataset, monthLabels);
             ViewData["topProductsLineChart"] = GenerateLineChart(top5ProductsDataset, monthLabels);
@@ -102,23 +105,25 @@ namespace MyCosts.Controllers
         }
 
         [NonAction]
-        public static Chart GenerateBarChart(ChartJSDataset chartDataset, List<string> labels)
+        public static Chart GenerateBarChart(IEnumerable<ChartJSDataset> chartDatasets)
         {
-            BarDataset dataset = new()
-            {
-                Label = chartDataset.Title,
-                Data = chartDataset.Values,
-                BackgroundColor = chartDataset.Colors,
-                BorderColor = chartDataset.Colors,
-                BorderWidth = new List<int>() { 1 }
-            };
-
             ChartJSCore.Models.Data data = new()
             {
-                Labels = labels,
+                Labels = new List<string>(),
                 Datasets = new List<Dataset>()
             };
-            data.Datasets.Add(dataset);
+
+            foreach (ChartJSDataset dataset in chartDatasets)
+            {
+                data.Datasets.Add(new BarDataset()
+                {
+                    Label = dataset.Title,
+                    Data = dataset.Values,
+                    BackgroundColor = dataset.Colors,
+                    BorderColor = dataset.Colors,
+                    BorderWidth = new List<int>() { 1 }
+                });
+            }
 
             var options = new Options
             {
@@ -134,32 +139,7 @@ namespace MyCosts.Controllers
                             }
                         }
                     },
-                    XAxes = new List<Scale>
-                    {
-                        new BarScale
-                        {
-                            BarPercentage = 0.5,
-                            BarThickness = 6,
-                            MaxBarThickness = 8,
-                            MinBarLength = 2,
-                            GridLines = new GridLine()
-                            {
-                                OffsetGridLines = true
-                            }
-                        }
-                    }
                 },
-                Layout = new Layout
-                {
-                    Padding = new Padding
-                    {
-                        PaddingObject = new PaddingObject
-                        {
-                            Left = 10,
-                            Right = 12
-                        }
-                    }
-                }
             };
 
             return new Chart
@@ -218,8 +198,8 @@ namespace MyCosts.Controllers
                     Data = dataset.Values,
                     Fill = "false",
                     LineTension = 0.1,
-                    BackgroundColor = ChartColor.FromRgba(dataset.Color.R, dataset.Color.G, dataset.Color.B, 0.4),
-                    BorderColor = ChartColor.FromRgba(dataset.Color.R, dataset.Color.G, dataset.Color.B, 1),
+                    BackgroundColor = dataset.Color,
+                    BorderColor = dataset.Color,
                     BorderCapStyle = "butt",
                     BorderDash = new List<int> { },
                     BorderDashOffset = 0.0,
