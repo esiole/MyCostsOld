@@ -27,6 +27,7 @@ namespace MyCosts.Models
         public string Store { get; set; }
 
         [Display(Name = "Количество")]
+        [Range(1, Int32.MaxValue, ErrorMessage = "Количество купленных товаров не может быть меньше 1")]
         public int? Count { get; set; }
 
         [Display(Name = "Вес в килограммах")]
