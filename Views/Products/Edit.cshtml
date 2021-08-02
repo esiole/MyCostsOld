@@ -6,10 +6,13 @@
 
 <div class="body-form-add">
     <div class="form-add">
-        <form asp-action="Edit" asp-route-id="@Model.Product.Id" asp-route-category="@Model.Product.CategoryId">
+        <form asp-action="Edit">
             <div class="mb-4">
                 <h2>@title</h2>
                 <hr class="my-2" />
+            </div>
+            <div>
+                <input hidden asp-for="Product.Id" value="@Model.Product.Id" />
             </div>
             <div class="mb-4">
                 <label asp-for="Product.CategoryId" class="form-label"></label>
