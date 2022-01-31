@@ -1,8 +1,0 @@
-﻿@model IEnumerable<Product>
-
-<select id="products" name="Cost.ProductId" class="form-select form-select-lg border-dark">
-    @foreach (var item in Model)
-    {
-        <option value="@item.Id">@item.Name</option>
-    }
-</select>
