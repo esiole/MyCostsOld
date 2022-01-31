@@ -1,0 +1,6 @@
+{
+  "ConnectionStrings": {
+    "Default": "Host=localhost;Port=5432;Database=MyCosts;Username=pguser;Password=pgadmin2",
+    "Local": "Host=localhost;Port=5432;Database=MyCosts;Username=pguser;Password=pgadmin2"
+  }
+}
