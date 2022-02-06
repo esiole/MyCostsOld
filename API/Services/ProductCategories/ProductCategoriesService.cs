@@ -11,4 +11,12 @@ public class ProductCategoriesService : IProductCategoriesService
 
     public void Add(ProductCategory category) => _productCategoriesRepository.Add(category);
     public List<ProductCategory> Get() => _productCategoriesRepository.Get();
+
+    public void Remove(int id)
+    {
+        var productCategory = _productCategoriesRepository.Get(id);
+        if (productCategory != null) _productCategoriesRepository.Remove(productCategory);
+    }
+
+    public void Update(ProductCategory category) => _productCategoriesRepository.Update(category);
 }

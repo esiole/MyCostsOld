@@ -28,12 +28,14 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Remove([FromRoute] int id)
     {
-        throw new NotImplementedException();
+        _productCategoriesService.Remove(id);
+        return Ok();
     }
 
     [HttpPut]
-    public IActionResult Update()
+    public IActionResult Update([FromBody] ProductCategoryResponseModel model)
     {
-        throw new NotImplementedException();
+        _productCategoriesService.Update(model);
+        return Ok();
     }
 }

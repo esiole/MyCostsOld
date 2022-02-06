@@ -4,5 +4,19 @@ public class ProductCategoriesDbRepository : DbRepository<ProductCategory>, IPro
 {
     public ProductCategoriesDbRepository(MyCostsDbContext context) : base(context) { }
 
-    public override List<ProductCategory> Get() => _context.ProductCategories.ToList();
+    public override List<ProductCategory> Get()
+    {
+        lock (_context.Locker)
+        {
+            return _context.ProductCategories.ToList();
+        }
+    }
+
+    public override ProductCategory? Get(int id)
+    {
+        lock (_context.Locker)
+        {
+            return _context.ProductCategories.FirstOrDefault(pc => pc.Id == id);
+        }
+    }
 }

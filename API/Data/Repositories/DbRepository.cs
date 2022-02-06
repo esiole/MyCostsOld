@@ -20,15 +20,15 @@ public abstract class DbRepository<T> : IRepository<T>
     }
 
     public abstract List<T> Get();
+    public abstract T? Get(int id);
 
-    public virtual void Remove(int id)
+    public virtual void Remove(T item)
     {
-        throw new NotImplementedException();
-        //lock (_context.Locker)
-        //{
-        //    _context.Remove(item);
-        //    _context.SaveChanges();
-        //}
+        lock (_context.Locker)
+        {
+            _context.Remove(item);
+            _context.SaveChanges();
+        }
     }
 
     protected void Save()

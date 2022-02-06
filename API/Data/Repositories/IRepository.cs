@@ -4,6 +4,7 @@ public interface IRepository<T> where T : class
 {
     void Add(T item);
     List<T> Get();
-    void Remove(int id);
+    T? Get(int id);
+    void Remove(T item);
     void Update(T item);
 }
