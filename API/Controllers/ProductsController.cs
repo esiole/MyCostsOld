@@ -12,27 +12,30 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Add()
+    public IActionResult Add([FromBody] ProductModel model)
     {
-        throw new NotImplementedException();
+        _productsService.Add(model);
+        return Ok();
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-        List<Product> products = _productsService.Get();
+        var products = _productsService.Get().Select(p => new ProductResponseModel(p));
         return Ok(products);
     }
 
     [HttpDelete("{id}")]
     public IActionResult Remove([FromRoute] int id)
     {
-        throw new NotImplementedException();
+        _productsService.Remove(id);
+        return Ok();
     }
 
     [HttpPut]
-    public IActionResult Update()
+    public IActionResult Update([FromBody] ProductResponseModel model)
     {
-        throw new NotImplementedException();
+        _productsService.Update(model);
+        return Ok();
     }
 }
