@@ -1,3 +1,3 @@
 ﻿namespace MyCosts.API.Data.Repositories.ProductCategories;
 
-public interface IProductCategoriesRepository : IRepository<Product> { }
+public interface IProductCategoriesRepository : IRepository<ProductCategory> { }

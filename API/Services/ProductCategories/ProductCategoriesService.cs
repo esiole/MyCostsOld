@@ -8,4 +8,7 @@ public class ProductCategoriesService : IProductCategoriesService
     {
         _productCategoriesRepository = productCategoriesRepository;
     }
+
+    public void Add(ProductCategory category) => _productCategoriesRepository.Add(category);
+    public List<ProductCategory> Get() => _productCategoriesRepository.Get();
 }
