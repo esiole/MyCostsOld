@@ -1,10 +1,11 @@
 ﻿namespace MyCosts.API.Data.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public abstract class DbRepository<T> : IRepository<T> 
+    where T : class
 {
     protected readonly MyCostsDbContext _context;
 
-    public Repository(MyCostsDbContext context)
+    public DbRepository(MyCostsDbContext context)
     {
         _context = context;
     }
@@ -18,25 +19,16 @@ public class Repository<T> : IRepository<T> where T : class
         }
     }
 
-    public virtual T Get(int id)
-    {
-        throw new NotImplementedException();
-    }
+    public abstract List<T> Get();
+    public abstract T? Get(int id);
 
-    public virtual List<T> Get()
+    public virtual void Remove(T item)
     {
-        throw new NotImplementedException();
-    }
-
-
-    public virtual void Remove(int id)
-    {
-        throw new NotImplementedException();
-        //lock (_context.Locker)
-        //{
-        //    _context.Remove(item);
-        //    _context.SaveChanges();
-        //}
+        lock (_context.Locker)
+        {
+            _context.Remove(item);
+            _context.SaveChanges();
+        }
     }
 
     protected void Save()

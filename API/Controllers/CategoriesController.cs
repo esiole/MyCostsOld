@@ -4,32 +4,38 @@
 [ApiController]
 public class CategoriesController : ControllerBase
 {
-    public CategoriesController()
-    {
+    private readonly IProductCategoriesService _productCategoriesService;
 
+    public CategoriesController(IProductCategoriesService productCategoriesService)
+    {
+        _productCategoriesService = productCategoriesService;
     }
 
     [HttpPost]
-    public IActionResult Add()
+    public IActionResult Add([FromBody] ProductCategoryModel categoryModel)
     {
-        throw new NotImplementedException();
+        _productCategoriesService.Add(categoryModel);
+        return Ok();
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-        throw new NotImplementedException();
+        var productCategories = _productCategoriesService.Get().Select(pc => new ProductCategoryResponseModel(pc));
+        return Ok(productCategories);
     }
 
     [HttpDelete("{id}")]
     public IActionResult Remove([FromRoute] int id)
     {
-        throw new NotImplementedException();
+        _productCategoriesService.Remove(id);
+        return Ok();
     }
 
     [HttpPut]
-    public IActionResult Update()
+    public IActionResult Update([FromBody] ProductCategoryResponseModel model)
     {
-        throw new NotImplementedException();
+        _productCategoriesService.Update(model);
+        return Ok();
     }
 }

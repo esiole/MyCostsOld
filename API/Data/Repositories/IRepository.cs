@@ -1,10 +1,10 @@
 ﻿namespace MyCosts.API.Data.Repositories;
 
-public interface IRepository<T> where T : class
+public interface IRepository<T> where T : class 
 {
     void Add(T item);
-    T Get(int id);
     List<T> Get();
-    void Remove(int id);
+    T? Get(int id);
+    void Remove(T item);
     void Update(T item);
 }

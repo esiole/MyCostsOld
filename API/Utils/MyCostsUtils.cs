@@ -15,6 +15,6 @@ public static class MyCostsUtils
         services.AddScoped<IProductCategoriesRepository, ProductCategoriesDbRepository>();
 
         services.AddTransient<IProductsService, ProductsService>();
-        //services.AddTransient<IProductCategoriesService, ProductCategoriesService>();
+        services.AddTransient<IProductCategoriesService, ProductCategoriesService>();
     }
 }
